@@ -1,10 +1,13 @@
-//
-//  Kalman1D.h
-//  
-//
-//  Created by Lars Soltmann on 5/9/15.
-//
-//
+/*
+Kalman1D.h
+
+Description: Header file for 1D kalman filter
+
+Revision History
+Rev A - 09 May 2015 - Created and debugged
+
+Author: Lars Soltmann
+*/
 
 #ifndef ____Kalman1D__
 #define ____Kalman1D__
