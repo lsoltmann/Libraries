@@ -55,4 +55,4 @@ private:
 
 
 
-#endif /* defined(____MS5805__) */
+#endif
