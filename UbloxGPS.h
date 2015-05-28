@@ -1,15 +1,8 @@
 /*
- UbloxGPS.ch
- 
- Description: Header for GPS driver
- 
- 
- Revision History
- Rev A - 27 May 2015 - Created and debugged
- 
- Author: Lars Soltmann
- Code contribution: EMLID
- */
+UBlox 7 & 8 GPS library
+
+Lars Soltmann
+*/
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -52,10 +45,17 @@ private:
     unsigned char from_gps_data;
     unsigned char to_gps_data;
     unsigned char data_array;
+    int disableNMEA_GLL();
+    int disableNMEA_GGA();
+    int disableNMEA_GSA();
+    int disableNMEA_GSV();
+    int disableNMEA_RMC();
+    int disableNMEA_VTG();
     int enableNAV_POSLLH();
     int enableNAV_STATUS();
     int enableNAV_VELNED();
     int setRATE();
+    int GNSS_Reset();
     int message_ID;
     int message_flag;
     int typeFlag;
