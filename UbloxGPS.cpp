@@ -267,37 +267,23 @@ int Ublox::messageType(unsigned char from_gps_data, unsigned char data_array[44]
 int Ublox::decodeMessage(unsigned char data_array[44]){
 	switch(data_array[3]) {
         	case 0x02:
-                        gps_lat=(((data_array[17]) << 24) | ((data_array[16]) << 16) | ((data_array[15]) << 8) | (data_array[14]))/10000000;
-                        gps_lon=(((data_array[13]) << 24) | ((data_array[12]) << 16) | ((data_array[11]) << 8) | (data_array[10]))/10000000;
-                        gps_h=(((data_array[21]) << 24) | ((data_array[20]) << 16) | ((data_array[19]) << 8) | (data_array[18]))/1000;
-			gps_hmsl=(((data_array[25]) << 24) | ((data_array[24]) << 16) | ((data_array[23]) << 8) | (data_array[22]))/1000;
+                        gps_lat=(double)(((data_array[17]) << 24) | ((data_array[16]) << 16) | ((data_array[15]) << 8) | (data_array[14]))/ (double)10000000; //deg
+                        gps_lon=(double)(((data_array[13]) << 24) | ((data_array[12]) << 16) | ((data_array[11]) << 8) | (data_array[10]))/ (double)10000000;  //deg
+                        gps_h=(float)(((data_array[21]) << 24) | ((data_array[20]) << 16) | ((data_array[19]) << 8) | (data_array[18]))*0.00328084;  //mm to ft
+			gps_hmsl=(float)(((data_array[25]) << 24) | ((data_array[24]) << 16) | ((data_array[23]) << 8) | (data_array[22]))*0.00328084;  //mm to ft
 			break;
                 case 0x03:
-			gps_itow=(((data_array[9]) << 24) | ((data_array[8]) << 16) | ((data_array[7]) << 8) | (data_array[6]))/1000;
+			gps_itow=(float)(((data_array[9]) << 24) | ((data_array[8]) << 16) | ((data_array[7]) << 8) | (data_array[6]))/ (float)1000;  //sec
                         gps_stat=(int)data_array[10];
 			break;
                 case 0x12:
-                        gps_N=(((data_array[13]) << 24) | ((data_array[12]) << 16) | ((data_array[11]) << 8) | (data_array[10]));
-                        gps_E=(((data_array[17]) << 24) | ((data_array[16]) << 16) | ((data_array[15]) << 8) | (data_array[14]));
-                        gps_D=(((data_array[21]) << 24) | ((data_array[20]) << 16) | ((data_array[19]) << 8) | (data_array[18]));
-                        gps_3D=(((data_array[25]) << 24) | ((data_array[24]) << 16) | ((data_array[23]) << 8) | (data_array[22]));
-                        gps_2D=(((data_array[29]) << 24) | ((data_array[28]) << 16) | ((data_array[27]) << 8) | (data_array[26]));
-                        gps_crs=(((data_array[33]) << 24) | ((data_array[32]) << 16) | ((data_array[31]) << 8) | (data_array[30]))/100000;
+                        gps_N=(float)(((data_array[13]) << 24) | ((data_array[12]) << 16) | ((data_array[11]) << 8) | (data_array[10]))*0.0328084;  // cm/s to ft/s
+                        gps_E=(float)(((data_array[17]) << 24) | ((data_array[16]) << 16) | ((data_array[15]) << 8) | (data_array[14]))*0.0328084;  // cm/s to ft/s
+                        gps_D=(float)(((data_array[21]) << 24) | ((data_array[20]) << 16) | ((data_array[19]) << 8) | (data_array[18]))*0.0328084;  // cm/s to ft/s
+                        gps_3D=(float)(((data_array[25]) << 24) | ((data_array[24]) << 16) | ((data_array[23]) << 8) | (data_array[22]))*0.0328084;  // cm/s to ft/s
+                        gps_2D=(float)(((data_array[29]) << 24) | ((data_array[28]) << 16) | ((data_array[27]) << 8) | (data_array[26]))*0.0328084;  // cm/s to ft/s
+                        gps_crs=(float)(((data_array[33]) << 24) | ((data_array[32]) << 16) | ((data_array[31]) << 8) | (data_array[30]))/ (float)100000;  //deg
 			break;
                 }
-// Debug
-/*    printf("itow: %lf\n",gps_itow);
-    printf("lat: %lf\n",gps_lat);
-    printf("lon: %lf\n",gps_lon);
-    printf("h: %lf\n",gps_h);
-    printf("hmsl: %lf\n",gps_hmsl);
-    printf("N: %lf\n",gps_N);
-    printf("E: %lf\n",gps_E);
-    printf("D: %lf\n",gps_D);
-    printf("3D: %lf\n",gps_3D);
-    printf("2D: %lf\n",gps_2D);
-    printf("crs: %lf\n",gps_crs);
-    printf("stat: %d\n\n",gps_stat);
-*/
 		return 0;
 }
