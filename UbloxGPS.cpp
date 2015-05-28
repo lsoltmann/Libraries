@@ -1,21 +1,17 @@
 /*
- UbloxGPS.cpp
- 
- Description: Driver for UBlox NEO-7M and NEO-M8N
- 
- 
- Revision History
- Rev A - 27 May 2015 - Created and debugged
- 
- Author: Lars Soltmann
- Code contribution: EMLID
- */
+UBlox 7 & 8 GPS library
+
+Code by: Lars Soltmann
+Code contribution by: EMLID
+*/
 
 #include "UbloxGPS.h"
 
 Ublox::Ublox(std::string name) : spi_device_name(name) {
 }
 
+
+// Enable / Disable various GPS messages ... by default the only messages enabled are the following 6 NMEA messages
 
 int Ublox::enableNAV_POSLLH()
 {
@@ -53,12 +49,100 @@ int Ublox::enableNAV_STATUS()
     return SPIdev::transfer(spi_device_name.c_str(), gps_nav_status, from_gps_data_nav, gps_nav_status_length, 5000000);
 }
 
+int Ublox::disableNMEA_GLL()
+{
+    unsigned char gps_nmea_gll[] = {0xb5, 0x62, 0x06, 0x01, 0x08, 0x00, 0xF0, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x2B};
+    int gps_nmea_gll_length = (sizeof(gps_nmea_gll)/sizeof(*gps_nmea_gll));
+    unsigned char from_gps_data_nmea[gps_nmea_gll_length];
+
+    return SPIdev::transfer(spi_device_name.c_str(), gps_nmea_gll, from_gps_data_nmea, gps_nmea_gll_length, 5000000);
+}
+
+int Ublox::disableNMEA_GGA()
+{
+    unsigned char gps_nmea_gga[] = {0xb5, 0x62, 0x06, 0x01, 0x08, 0x00, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x24};
+    int gps_nmea_gga_length = (sizeof(gps_nmea_gga)/sizeof(*gps_nmea_gga));
+    unsigned char from_gps_data_nmea[gps_nmea_gga_length];
+
+    return SPIdev::transfer(spi_device_name.c_str(), gps_nmea_gga, from_gps_data_nmea, gps_nmea_gga_length, 5000000);
+}
+
+int Ublox::disableNMEA_GSA()
+{
+    unsigned char gps_nmea_gsa[] = {0xb5, 0x62, 0x06, 0x01, 0x08, 0x00, 0xF0, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x02, 0x32};
+    int gps_nmea_gsa_length = (sizeof(gps_nmea_gsa)/sizeof(*gps_nmea_gsa));
+    unsigned char from_gps_data_nmea[gps_nmea_gsa_length];
+
+    return SPIdev::transfer(spi_device_name.c_str(), gps_nmea_gsa, from_gps_data_nmea, gps_nmea_gsa_length, 5000000);
+}
+
+int Ublox::disableNMEA_GSV()
+{
+    unsigned char gps_nmea_gsv[] = {0xb5, 0x62, 0x06, 0x01, 0x08, 0x00, 0xF0, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x03, 0x39};
+    int gps_nmea_gsv_length = (sizeof(gps_nmea_gsv)/sizeof(*gps_nmea_gsv));
+    unsigned char from_gps_data_nmea[gps_nmea_gsv_length];
+
+    return SPIdev::transfer(spi_device_name.c_str(), gps_nmea_gsv, from_gps_data_nmea, gps_nmea_gsv_length, 5000000);
+}
+
+int Ublox::disableNMEA_RMC()
+{
+    unsigned char gps_nmea_rmc[] = {0xb5, 0x62, 0x06, 0x01, 0x08, 0x00, 0xF0, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x04, 0x40};
+    int gps_nmea_rmc_length = (sizeof(gps_nmea_rmc)/sizeof(*gps_nmea_rmc));
+    unsigned char from_gps_data_nmea[gps_nmea_rmc_length];
+
+    return SPIdev::transfer(spi_device_name.c_str(), gps_nmea_rmc, from_gps_data_nmea, gps_nmea_rmc_length, 5000000);
+}
+
+int Ublox::disableNMEA_VTG()
+{
+    unsigned char gps_nmea_vtg[] = {0xb5, 0x62, 0x06, 0x01, 0x08, 0x00, 0xF0, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x05, 0x47};
+    int gps_nmea_vtg_length = (sizeof(gps_nmea_vtg)/sizeof(*gps_nmea_vtg));
+    unsigned char from_gps_data_nmea[gps_nmea_vtg_length];
+
+    return SPIdev::transfer(spi_device_name.c_str(), gps_nmea_vtg, from_gps_data_nmea, gps_nmea_vtg_length, 5000000);
+}
+
+int Ublox::GNSS_Reset()
+{
+    unsigned char gps_gnss_rst[] = {0xb5, 0x62, 0x06, 0x04, 0x04, 0x00, 0x00, 0x00, 0x02, 0x00, 0x10, 0x68};
+    int gps_gnss_rst_length = (sizeof(gps_gnss_rst)/sizeof(*gps_gnss_rst));
+    unsigned char from_gps_data_gnss[gps_gnss_rst_length];
+
+    return SPIdev::transfer(spi_device_name.c_str(), gps_gnss_rst, from_gps_data_gnss, gps_gnss_rst_length, 5000000);
+}
 
 int Ublox::initialize()
 {
-    // Enable messages / settings
     init_error=0;
 
+    // Disable default NMEA messages
+    if (disableNMEA_GLL()<0)
+    {
+	init_error++;
+    }
+    if (disableNMEA_GGA()<0)
+    {
+        init_error++;
+    }
+    if (disableNMEA_GSA()<0)
+    {
+        init_error++;
+    }
+    if (disableNMEA_GSV()<0)
+    {
+        init_error++;
+    }
+    if (disableNMEA_RMC()<0)
+    {
+        init_error++;
+    }
+    if (disableNMEA_VTG()<0)
+    {
+        init_error++;
+    }
+
+    // Enable UBX messages
     if (enableNAV_POSLLH()<0)
     {
 	init_error++;
@@ -71,10 +155,13 @@ int Ublox::initialize()
     {
         init_error++;
     }
+
+    // Set update rate
     if (setRATE()<0)
     {
         init_error++;
     }
+
     return init_error;
 }
 
@@ -83,7 +170,7 @@ int Ublox::getMessages()
 {
     int message_ID=0;
     unsigned char to_gps_data = 0x00, from_gps_data = 0x00;
-    unsigned char data_array[44] = {0x00};
+    unsigned char data_array[44] = {0x00}; // 44 bytes is the longest message (VELNED), may need to be increased if other messages are added
     int message_flag=0;
     int typeFlag=0;
     int spi_transfer_data_length=1;
@@ -92,6 +179,7 @@ int Ublox::getMessages()
     double gps_lat=0;
     double gps_lon=0;
     float gps_h=0;
+    float gps_hmsl=0;
     float gps_N=0;
     float gps_E=0;
     float gps_D=0;
@@ -107,70 +195,21 @@ int Ublox::getMessages()
     		SPIdev::transfer(spi_device_name.c_str(), &to_gps_data, &from_gps_data, 1, 5000000);
     		data_array[i+4]=from_gps_data;
 	}
-/*
-printf("array 0 = %X\n",data_array[0]);
-printf("array 1 = %X\n",data_array[1]);
-printf("array 2 = %X\n",data_array[2]);
-printf("array 3 = %X\n",data_array[3]);
-printf("array 4 = %X\n",data_array[4]);
-printf("array 5 = %X\n",data_array[5]);
-printf("array 6 = %X\n",data_array[6]);
-printf("array 7 = %X\n",data_array[7]);
-printf("array 8 = %X\n",data_array[8]);
-printf("array 9 = %X\n",data_array[9]);
-printf("array 10 = %X\n",data_array[10]);
-printf("array 11 = %X\n",data_array[11]);
-printf("array 12 = %X\n",data_array[12]);
-printf("array 13 = %X\n",data_array[13]);
-printf("array 14 = %X\n",data_array[14]);
-printf("array 15 = %X\n",data_array[15]);
-printf("array 16 = %X\n",data_array[16]);
-printf("array 17 = %X\n",data_array[17]);
-printf("array 18 = %X\n",data_array[18]);
-printf("array 19 = %X\n",data_array[19]);
-printf("array 20 = %X\n",data_array[20]);
-printf("array 21 = %X\n",data_array[21]);
-printf("array 22 = %X\n",data_array[22]);
-printf("array 23 = %X\n",data_array[23]);
-printf("array 24 = %X\n",data_array[24]);
-printf("array 25 = %X\n",data_array[25]);
-printf("array 26 = %X\n",data_array[26]);
-printf("array 27 = %X\n",data_array[27]);
-printf("array 28 = %X\n",data_array[28]);
-printf("array 29 = %X\n",data_array[29]);
-printf("array 30 = %X\n",data_array[30]);
-printf("array 31 = %X\n",data_array[31]);
-printf("array 32 = %X\n",data_array[32]);
-printf("array 33 = %X\n",data_array[33]);
-printf("array 34 = %X\n",data_array[34]);
-printf("array 35 = %X\n",data_array[35]);
-printf("array 36 = %X\n",data_array[36]);
-printf("array 37 = %X\n",data_array[37]);
-printf("array 38 = %X\n",data_array[38]);
-printf("array 39 = %X\n",data_array[39]);
-printf("array 40 = %X\n",data_array[40]);
-printf("array 41 = %X\n",data_array[41]);
-printf("array 42 = %X\n",data_array[42]);
-printf("array 43 = %X\n\n",data_array[43]);
-*/
+
 	if (message_flag == 0 ){
 		message_ID = messageType(from_gps_data, data_array);
-//		printf("Message ID = %X\n",message_ID);
 		switch(message_ID){
 		case 0x03:
         		spi_transfer_data_length = 20;
         		message_flag=1;
-//			printf("Message 3\n");
 			break;
 		case 0x02:
                         spi_transfer_data_length = 32;
                         message_flag=1;
-//			printf("Message 2\n");
 			break;
 		case 0x12:
                         spi_transfer_data_length = 40;
                         message_flag=1;
-//			printf("Message 12\n");
 			break;
 		}
 	}
