@@ -27,11 +27,11 @@ void CONTROL::reset(){
     t_previous=0;
 };
 
-float CONTROL::PID(float P, float I, float D, float target, float actual){
+double CONTROL::PID(float P, float I, float D, float target, float actual){
     // Get current time to find differential time element
     gettimeofday(&tv,NULL);
     t = 1000000 * tv.tv_sec + tv.tv_usec;
-    dt=t-t_previous;
+    dt=(t-t_previous)/1000000.0;
 
     // Calculate current error
     error=target-actual;
@@ -56,6 +56,7 @@ float CONTROL::PID(float P, float I, float D, float target, float actual){
 
     // Safe time and error values for next loop;
     t_previous=t;
+    error_previous=error;
 
     return control_input;
 };
