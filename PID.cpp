@@ -27,7 +27,7 @@ void CONTROL::reset(){
     t_previous=0;
 };
 
-double CONTROL::PID(float P, float I, float D, float target, float actual){
+float CONTROL::PID(float P, float I, float D, float target, float actual){
     // Get current time to find differential time element
     gettimeofday(&tv,NULL);
     t = 1000000 * tv.tv_sec + tv.tv_usec;
