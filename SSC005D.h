@@ -18,14 +18,16 @@
 #include <unistd.h>
 #include <string>
 
-#define MS4515_DEFAULT_ADDRESS 0x28
-#define MS4515_TYPE_A 1
-#define MS4515_TYPE_B 2
+#define HWSSC_DEFAULT_ADDRESS 0x28
+#define HWSSC_cal_10_95 1
+#define HWSSC_cal_05_95 2
+#define HWSSC_cal_05_85 3
+#define HWSSC_cal_04_94 4
 
 class HWSSC
 {
 public:
-    HWSSC(uint8_t address = MS4515_DEFAULT_ADDRESS);
+    HWSSC(uint8_t address = HWSSC_DEFAULT_ADDRESS);
     ~HWSSC();
     uint16_t readPressure_raw();
     float convertPressure(uint16_t pdata,int calRange,int sensRange);
