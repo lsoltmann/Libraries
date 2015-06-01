@@ -30,7 +30,7 @@ public:
     HWSSC(uint8_t address = HWSSC_DEFAULT_ADDRESS);
     ~HWSSC();
     uint16_t readPressure_raw();
-    float convertPressure(uint16_t pdata,int calRange,int sensRange);
+    double convertPressure(uint16_t pdata,int calRange,int sensRange);
 
 private:
     uint8_t devAddr, buffer[2];

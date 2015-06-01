@@ -41,7 +41,7 @@ double HWSSC::convertPressure(uint16_t pdata,int calRange,int sensRange){
 	press=(1.525878906e-4*pdata-1.25)*sensRange;
     }
     if (calRange == 2) { // 5 to 95% calibration
-	press=(1.356336806e-4*pdata-1.111111111)*sensRangee;
+	press=(1.356336806e-4*pdata-1.111111111)*sensRange;
     }
     if (calRange == 3) { // 5 to 85% calibration
 	press=(1.525878906e-4*pdata-1.125)*sensRange;
