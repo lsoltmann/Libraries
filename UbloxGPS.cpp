@@ -11,8 +11,17 @@ Ublox::Ublox(std::string name) : spi_device_name(name) {
 }
 
 
-// Enable / Disable various GPS messages ... by default the only messages enabled are the following 6 NMEA messages
+/* Enable / Disable various GPS messages
 
+By default the only messages enabled are the following 6 NMEA messages
+GLL,GGA,GSA,GSV,RMC,VTG
+since we are using the UBX protocol instead of the NMEA protocol, these are just clogging up the buffer and have
+been shown to cause significant time lag in the output. 
+*/
+
+// The follwing three messages are no longer used (POSLLH,VELNED,STATUS) but are left here anyway.
+// NAV-PVT contains the same data as the above mentioned messages with some additional useful information
+// and all with less data to transfer from the GPS, so win-win.
 int Ublox::enableNAV_POSLLH()
 {
     unsigned char gps_nav_posllh[] = {0xb5, 0x62, 0x06, 0x01, 0x03, 0x00, 0x01, 0x02, 0x01, 0x0E, 0x47};
@@ -31,15 +40,6 @@ int Ublox::enableNAV_VELNED()
     return SPIdev::transfer(spi_device_name.c_str(), gps_nav_velned, from_gps_data_nav, gps_nav_velned_length, 5000000);
 }
 
-int Ublox::setRATE()
-{
-    unsigned char gps_rate[] = {0xb5, 0x62, 0x06, 0x08, 0x06, 0x00, 0xFA, 0x00, 0x01, 0x00, 0x01, 0x00, 0x10, 0x96};
-    int gps_rate_length = (sizeof(gps_rate)/sizeof(*gps_rate));
-    unsigned char from_gps_data_nav[gps_rate_length];
-
-    return SPIdev::transfer(spi_device_name.c_str(), gps_rate, from_gps_data_nav, gps_rate_length, 5000000);
-}
-
 int Ublox::enableNAV_STATUS()
 {
     unsigned char gps_nav_status[] = {0xb5, 0x62, 0x06, 0x01, 0x03, 0x00, 0x01, 0x03, 0x01, 0x0F, 0x49};
@@ -49,6 +49,33 @@ int Ublox::enableNAV_STATUS()
     return SPIdev::transfer(spi_device_name.c_str(), gps_nav_status, from_gps_data_nav, gps_nav_status_length, 5000000);
 }
 
+int Ublox::enableNAV_PVT()
+{
+    unsigned char gps_nav_status[] = {0xb5, 0x62, 0x06, 0x01, 0x03, 0x00, 0x01, 0x07, 0x01, 0x13, 0x51};
+    int gps_nav_status_length = (sizeof(gps_nav_status)/sizeof(*gps_nav_status));
+    unsigned char from_gps_data_nav[gps_nav_status_length];
+
+    return SPIdev::transfer(spi_device_name.c_str(), gps_nav_status, from_gps_data_nav, gps_nav_status_length, 5000000);
+}
+
+int Ublox::setRATE()
+{
+    unsigned char gps_rate[] = {0xb5, 0x62, 0x06, 0x08, 0x06, 0x00, 0xFA, 0x00, 0x01, 0x00, 0x01, 0x00, 0x10, 0x96};
+    int gps_rate_length = (sizeof(gps_rate)/sizeof(*gps_rate));
+    unsigned char from_gps_data_nav[gps_rate_length];
+
+    return SPIdev::transfer(spi_device_name.c_str(), gps_rate, from_gps_data_nav, gps_rate_length, 5000000);
+}
+/* Unfinished!
+int Ublox::setNavEngine()
+{
+    unsigned char gps_rate[] = {0xb5, 0x62, 0x06, 0x24, 0x24, 0x00,...};
+    int gps_rate_length = (sizeof(gps_rate)/sizeof(*gps_rate));
+    unsigned char from_gps_data_nav[gps_rate_length];
+
+    return SPIdev::transfer(spi_device_name.c_str(), gps_rate, from_gps_data_nav, gps_rate_length, 5000000);
+}
+*/
 int Ublox::disableNMEA_GLL()
 {
     unsigned char gps_nmea_gll[] = {0xb5, 0x62, 0x06, 0x01, 0x08, 0x00, 0xF0, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x2B};
