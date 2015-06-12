@@ -54,6 +54,8 @@ private:
     int enableNAV_POSLLH();
     int enableNAV_STATUS();
     int enableNAV_VELNED();
+    int enableNAV_PVT();
+    int setNavEngine();
     int setRATE();
     int GNSS_Reset();
     int message_ID;
