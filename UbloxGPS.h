@@ -39,6 +39,8 @@ public:
     float gps_2D;
     float gps_crs;
     int gps_stat;
+    float gps_pdop;
+    int gps_nsat;
 
 private:
     std::string spi_device_name;
