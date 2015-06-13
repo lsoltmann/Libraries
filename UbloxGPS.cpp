@@ -373,8 +373,9 @@ int Ublox::decodeMessage(unsigned char data_array[100]){
 			gps_N=(float)(((data_array[57]) << 24) | ((data_array[56]) << 16) | ((data_array[55]) << 8) | (data_array[54]))*0.00328084;  // mm/s to ft/s
                         gps_E=(float)(((data_array[61]) << 24) | ((data_array[60]) << 16) | ((data_array[59]) << 8) | (data_array[58]))*0.00328084;  // mm/s to ft/s
                         gps_D=(float)(((data_array[65]) << 24) | ((data_array[64]) << 16) | ((data_array[63]) << 8) | (data_array[62]))*0.00328084;  // mm/s to ft/s
-                        gps_2D=(float)(((data_array[69]) << 24) | ((data_array[68]) << 16) | ((data_array[67]) << 8) | (data_array[66]))*0.00328084;  // mm/s to ft/s
-                        gps_3D=
+                        // GPS 2D and 3D velocity will be calculated during post processing
+                        //gps_2D=(float)(((data_array[69]) << 24) | ((data_array[68]) << 16) | ((data_array[67]) << 8) | (data_array[66]))*0.00328084;  // mm/s to ft/s
+                        //gps_3D=
                         gps_crs=(float)(((data_array[73]) << 24) | ((data_array[72]) << 16) | ((data_array[71]) << 8) | (data_array[70]))/ (float)100000;  //deg
                         gps_nsat=(int)data_array[29];
                         gps_pdop=(float)(((data_array[83]) << 8) | (data_array[82]))*0.01; // no units
