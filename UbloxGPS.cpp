@@ -1,5 +1,5 @@
 /*
-UBlox 7 & 8 GPS library
+UBlox 7 & 8 GPS library for use with Navio/Navio+
 
 Code by: Lars Soltmann
 Code contribution by: EMLID
@@ -17,11 +17,13 @@ By default the only messages enabled are the following 6 NMEA messages
 GLL,GGA,GSA,GSV,RMC,VTG
 since we are using the UBX protocol instead of the NMEA protocol, these are just clogging up the buffer and have
 been shown to cause significant time lag in the output. 
+
+
+The follwing three messages are no longer used (POSLLH,VELNED,STATUS) but are left here anyway.
+NAV-PVT contains the same data as the above mentioned messages with some additional useful information
+and all with less data to transfer from the GPS, so win-win.
 */
 
-// The follwing three messages are no longer used (POSLLH,VELNED,STATUS) but are left here anyway.
-// NAV-PVT contains the same data as the above mentioned messages with some additional useful information
-// and all with less data to transfer from the GPS, so win-win.
 int Ublox::enableNAV_POSLLH()
 {
     unsigned char gps_nav_posllh[] = {0xb5, 0x62, 0x06, 0x01, 0x03, 0x00, 0x01, 0x02, 0x01, 0x0E, 0x47};
@@ -170,6 +172,7 @@ int Ublox::initialize()
     }
 
     // Enable UBX messages
+/*
     if (enableNAV_POSLLH()<0)
     {
 	init_error++;
@@ -182,7 +185,18 @@ int Ublox::initialize()
     {
         init_error++;
     }
-
+*/
+    if (enableNAV_PVT()<0)
+    {
+        init_error++;
+    }
+    
+    // Set navigation engine
+    if (setNavEngine()<0)
+    {
+        init_error++;
+    }
+    
     // Set update rate
     if (setRATE()<0)
     {
@@ -197,7 +211,7 @@ int Ublox::getMessages()
 {
     int message_ID=0;
     unsigned char to_gps_data = 0x00, from_gps_data = 0x00;
-    unsigned char data_array[44] = {0x00}; // 44 bytes is the longest message (VELNED), may need to be increased if other messages are added
+    unsigned char data_array[100] = {0x00}; // 100 bytes is the size of the PVT message (92+8)
     int message_flag=0;
     int typeFlag=0;
     int spi_transfer_data_length=1;
@@ -214,6 +228,8 @@ int Ublox::getMessages()
     float gps_2D=0;
     float gps_crs=0;
     int gps_stat=0;
+    float gps_pdop=0;
+    int gps_nsat=0;
 
     while (true)
     {
@@ -238,6 +254,10 @@ int Ublox::getMessages()
                         spi_transfer_data_length = 40;
                         message_flag=1;
 			break;
+		case 0x07:
+			spi_transfer_data_length = 96
+			message_flag=1;
+			break;
 		}
 	}
 	else if (message_flag == 1)
@@ -261,7 +281,7 @@ int Ublox::getMessages()
     return 0 ;
 }
 
-int Ublox::messageType(unsigned char from_gps_data, unsigned char data_array[44]){
+int Ublox::messageType(unsigned char from_gps_data, unsigned char data_array[100]){
 	if (from_gps_data == 0xB5 && typeFlag == 0){
 		typeFlag=1;
 		data_array [0] = from_gps_data;
@@ -291,7 +311,7 @@ int Ublox::messageType(unsigned char from_gps_data, unsigned char data_array[44]
 }
 
 
-int Ublox::decodeMessage(unsigned char data_array[44]){
+int Ublox::decodeMessage(unsigned char data_array[100]){
 	switch(data_array[3]) {
         	case 0x02:
                         gps_lat=(double)(((data_array[17]) << 24) | ((data_array[16]) << 16) | ((data_array[15]) << 8) | (data_array[14]))/ (double)10000000; //deg
@@ -311,6 +331,20 @@ int Ublox::decodeMessage(unsigned char data_array[44]){
                         gps_2D=(float)(((data_array[29]) << 24) | ((data_array[28]) << 16) | ((data_array[27]) << 8) | (data_array[26]))*0.0328084;  // cm/s to ft/s
                         gps_crs=(float)(((data_array[33]) << 24) | ((data_array[32]) << 16) | ((data_array[31]) << 8) | (data_array[30]))/ (float)100000;  //deg
 			break;
+		case 0x07: // check units!
+			gps_lat=(double)(((data_array[37]) << 24) | ((data_array[36]) << 16) | ((data_array[35]) << 8) | (data_array[34]))/ (double)10000000; //deg
+                        gps_lon=(double)(((data_array[33]) << 24) | ((data_array[32]) << 16) | ((data_array[31]) << 8) | (data_array[30]))/ (double)10000000;  //deg
+                        gps_h=(float)(((data_array[41]) << 24) | ((data_array[40]) << 16) | ((data_array[39]) << 8) | (data_array[38]))*0.00328084;  //mm to ft
+			gps_hmsl=(float)(((data_array[45]) << 24) | ((data_array[44]) << 16) | ((data_array[43]) << 8) | (data_array[42]))*0.00328084;  //mm to ft
+			gps_stat=(int)data_array[26];
+			gps_N=(float)(((data_array[57]) << 24) | ((data_array[56]) << 16) | ((data_array[55]) << 8) | (data_array[54]))*0.00328084;  // mm/s to ft/s
+                        gps_E=(float)(((data_array[61]) << 24) | ((data_array[60]) << 16) | ((data_array[59]) << 8) | (data_array[58]))*0.00328084;  // mm/s to ft/s
+                        gps_D=(float)(((data_array[65]) << 24) | ((data_array[64]) << 16) | ((data_array[63]) << 8) | (data_array[62]))*0.00328084;  // mm/s to ft/s
+                        gps_2D=(float)(((data_array[69]) << 24) | ((data_array[68]) << 16) | ((data_array[67]) << 8) | (data_array[66]))*0.00328084;  // mm/s to ft/s
+                        gps_3D=
+                        gps_crs=(float)(((data_array[73]) << 24) | ((data_array[72]) << 16) | ((data_array[71]) << 8) | (data_array[70]))/ (float)100000;  //deg
+                        gps_nsat=(int)data_array[29];
+                        gps_pdop=(float)(((data_array[83]) << 8) | (data_array[82]))*0.01; // no units
                 }
 		return 0;
 }
