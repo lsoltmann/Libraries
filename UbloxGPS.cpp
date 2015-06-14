@@ -288,7 +288,7 @@ int Ublox::getMessages()
                         message_flag=1;
 			break;
 		case 0x07:
-			spi_transfer_data_length = 96
+			spi_transfer_data_length = 96;
 			message_flag=1;
 			break;
 		}
@@ -379,6 +379,16 @@ int Ublox::decodeMessage(unsigned char data_array[100]){
                         gps_crs=(float)(((data_array[73]) << 24) | ((data_array[72]) << 16) | ((data_array[71]) << 8) | (data_array[70]))/ (float)100000;  //deg
                         gps_nsat=(int)data_array[29];
                         gps_pdop=(float)(((data_array[83]) << 8) | (data_array[82]))*0.01; // no units
+			break;
                 }
+	// Debug
+	printf("Lat | Lon:  %.6f %.6f\n",gps_lat,gps_lon);
+      	printf("NED vel:    %.2f %.2f %.2f\n",gps_N,gps_E,gps_D);
+       	printf("h | hmsl:   %.2f %.2f\n",gps_h,gps_hmsl);
+        printf("Course:     %.2f\n",gps_crs);
+        printf("Status:     %d\n",gps_stat);
+        printf("Satellites: %d\n",gps_nsat);
+	printf("PDOP:	    %.2f\n\n",gps_pdop);
+
 		return 0;
 }
