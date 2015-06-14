@@ -382,13 +382,13 @@ int Ublox::decodeMessage(unsigned char data_array[100]){
 			break;
                 }
 	// Debug
-	printf("Lat | Lon:  %.6f %.6f\n",gps_lat,gps_lon);
+/*	printf("Lat | Lon:  %.6f %.6f\n",gps_lat,gps_lon);
       	printf("NED vel:    %.2f %.2f %.2f\n",gps_N,gps_E,gps_D);
        	printf("h | hmsl:   %.2f %.2f\n",gps_h,gps_hmsl);
         printf("Course:     %.2f\n",gps_crs);
         printf("Status:     %d\n",gps_stat);
         printf("Satellites: %d\n",gps_nsat);
 	printf("PDOP:	    %.2f\n\n",gps_pdop);
-
+*/
 		return 0;
 }
