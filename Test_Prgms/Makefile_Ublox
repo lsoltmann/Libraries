@@ -1,0 +1,9 @@
+CC = g++
+LIBRARIES = /home/pi/Libraries/
+INCLUDES = -I ../..
+
+all:
+	$(CC) $(INCLUDES) UbloxTest.cpp $(LIBRARIES)UbloxGPS.cpp -o UBLOXTEST
+clean:
+	rm UBLOXTEST
+
