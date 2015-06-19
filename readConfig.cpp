@@ -1,6 +1,22 @@
-readconfig::readconfig(){
-	ifstream params;
-	params.open("testconfig.txt");
+/*
+readConfig.cpp
+ 
+ Description: Rudimentary configuration file reader for NavDAQ
+ 
+ Revision History
+ Rev A - 19 June 2015 - Created and debugged
+ 
+ Author: Lars Soltmann
+ */
+ 
+ #include "readConfig.h"
+ 
+ readConfig::readConfig(std::string name) : file_name(name) {
+}
+
+int readConfig::readfile(){
+	open_error=0;
+	params.open(file_name.c_str());
 	if (params.is_open()) {
 		getline(params,line);
 		getline(params,line);
@@ -21,17 +37,35 @@ readconfig::readconfig(){
                 getline(params,line);
                 getline(params,line);
 		sscanf(line.c_str(),"%d",&output[16]);
+	
+		dataSampleRate=output[0];
+		MS5805_active=output[1];
+		MS5611_active=output[2];
+  		PPMdecode_active=output[3];
+  		AHRS_active=output[4];
+  		GPS_active=output[5];
+  		MS4515_active=output[6];
+  		SSC005D_active=output[7];
+  		ADC_active=output[8];
+  		RPM_active=output[9];
+  		IMU_active=output[10];
+  		gps_priority=output[11];
+  		ppm_priority=output[12];
+  		MS5611_priority=output[13];
+  		MS5805_priority=output[14];
+  		ahrs_priority=output[15];
+  		OUTPUT_TO_SCREEN=output[16];
 	}
 	else{
-		error_flag++;
+		open_error++;
 	}
-	
-/*	    //Debug
-	    cout << output[0] << "\n";
-	    cout << output[1] << "\n";
-	    cout << output[2] << "\n";
-	    cout << output[3] << "\n";
-	    cout << output[4] << "\n";
+/*	
+	//Debug
+	cout << output[0] << "\n";
+	cout << output[1] << "\n";
+	cout << output[2] << "\n";
+	cout << output[3] << "\n";
+	cout << output[4] << "\n";
     	cout << output[5] << "\n";
     	cout << output[6] << "\n";
     	cout << output[7] << "\n";
@@ -39,12 +73,11 @@ readconfig::readconfig(){
     	cout << output[9] << "\n";
     	cout << output[10] << "\n";
     	cout << output[11] << "\n";
-      cout << output[12] << "\n";
-      cout << output[13] << "\n";
-      cout << output[14] << "\n";
-     cout << output[15] << "\n";
-     cout << output[16] << "\n";
+      	cout << output[12] << "\n";
+      	cout << output[13] << "\n";
+      	cout << output[14] << "\n";
+     	cout << output[15] << "\n";
+     	cout << output[16] << "\n";
 */
 	params.close();
-	return 0;
 }
