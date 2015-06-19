@@ -379,6 +379,8 @@ int Ublox::decodeMessage(unsigned char data_array[100]){
                         gps_crs=(float)(((data_array[73]) << 24) | ((data_array[72]) << 16) | ((data_array[71]) << 8) | (data_array[70]))/ (float)100000;  //deg
                         gps_nsat=(int)data_array[29];
                         gps_pdop=(float)(((data_array[83]) << 8) | (data_array[82]))*0.01; // no units
+                        gps_velacc=(float)(((data_array[77]) << 24) | ((data_array[76]) << 16) | ((data_array[75]) << 8) | (data_array[74]))*0.00328084;  // mm/s to ft/s
+    			gps_altacc=(float)(((data_array[53]) << 24) | ((data_array[52]) << 16) | ((data_array[51]) << 8) | (data_array[50]))*0.00328084;  // mm to ft
 			break;
                 }
 	// Debug
