@@ -41,6 +41,8 @@ public:
     int gps_stat;
     float gps_pdop;
     int gps_nsat;
+    float gps_vacc;
+    float gps_hacc;
 
 private:
     std::string spi_device_name;
