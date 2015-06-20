@@ -43,10 +43,11 @@ public:
   int MS5805_priority;
   int ahrs_priority;
   int OUTPUT_TO_SCREEN;
+  int sys_orientation;
 
 private:
  ifstream params;
  std::string file_name;
- int output[17]; 
+ int output[18]; 
  string line;
 }
