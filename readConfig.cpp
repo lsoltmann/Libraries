@@ -51,7 +51,7 @@ int readConfig::readfile(){
   		GPS_active=output[6];
   		MS4515_active=output[7];
   		SSC005D_active=output[8];
-  		ADC_active=output[8];
+  		ADC_active=output[9];
   		RPM_active=output[10];
   		IMU_active=output[11];
   		gps_priority=output[12];
