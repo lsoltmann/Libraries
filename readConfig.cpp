@@ -1,16 +1,16 @@
 /*
 readConfig.cpp
- 
+
  Description: Rudimentary configuration file reader for NavDAQ
- 
+
  Revision History
  Rev A - 19 June 2015 - Created and debugged
- 
+
  Author: Lars Soltmann
  */
- 
+
  #include "readConfig.h"
- 
+
  readConfig::readConfig(std::string name) : file_name(name) {
 }
 
@@ -41,7 +41,7 @@ int readConfig::readfile(){
                 std::getline(params,line);
                 std::getline(params,line);
 		sscanf(line.c_str(),"%d",&output[17]);
-	
+
 		dataSampleRate=output[0];
 		sys_orientation=output[1];
 		MS5805_active=output[2];
@@ -64,7 +64,7 @@ int readConfig::readfile(){
 	else{
 		open_error++;
 	}
-/*	
+/*
 	//Debug
 	cout << output[0] << "\n";
 	cout << output[1] << "\n";
@@ -86,4 +86,5 @@ int readConfig::readfile(){
      	cout << output[17] << "\n";
 */
 	params.close();
+	return open_error;
 }

@@ -1,11 +1,11 @@
 /*
 readConfig.h
- 
+
  Description: Header for configuration reader library
- 
+
  Revision History
  Rev A - 19 June 2015 - Created and debugged
- 
+
  Author: Lars Soltmann
  */
 
@@ -14,7 +14,7 @@ readConfig.h
 
 #include<iostream>
 #include<fstream>
-#include<stdlib.h> 
+#include<stdlib.h>
 #include<stdio.h>
 #include<string>
 #include<sstream>
@@ -46,8 +46,10 @@ public:
   int sys_orientation;
 
 private:
- ifstream params;
+ std::ifstream params;
  std::string file_name;
- int output[18]; 
- string line;
-}
+ int output[18];
+ std::string line;
+};
+
+#endif
