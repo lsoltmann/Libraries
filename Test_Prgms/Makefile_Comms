@@ -1,0 +1,10 @@
+CC = g++
+LIBS = /home/pi/Libraries
+INCLUDES = -I ../..
+
+all:
+	$(CC) $(INCLUDES) CommsTest.cpp \
+	$(LIBS)/wifiCom.cpp -o CommsTest
+
+clean:
+	rm CommsTest
