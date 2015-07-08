@@ -42,6 +42,7 @@ private:
     struct sockaddr_in client_address;
     int recvlen;
     socklen_t clientlen;
+    socklen_t serverlen;
 };
 
 
