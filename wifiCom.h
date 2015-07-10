@@ -31,7 +31,7 @@ public:
     int openConnection(int port,int IPaddress[4]);
     std::string getIP();
     int sendData(unsigned char data[3])
-    unsigned char listenData();
+    int listenData();
     int port;
     int IPaddress[4];
     unsigned char data[3];
