@@ -16,21 +16,26 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <linux/types.h>
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <net/if.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <string>
+#include <sstream>
+#include <cstring>
 
 class COMMS {
 public:
     COMMS();
     int openConnection(int port,int IPaddress[4]);
     std::string getIP();
-    int sendData(unsigned char data[3])
+    int sendData(unsigned char data[3]);
     int listenData();
     int port;
     int IPaddress[4];

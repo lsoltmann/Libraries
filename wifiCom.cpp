@@ -102,7 +102,7 @@ int COMMS::listenData(){
     status=0;
     recvlen = recvfrom(server_socket, &recvmessage, 12, 0, (struct sockaddr *) &nonlocal_address, &nonlocal_len);
 //    recvlen = recvfrom(server_socket, &buffer, 1, 0, (struct sockaddr *)&client_address, &clientlen);
-    if (recvmessage[0]==34 && recvmessage[1]=43){
+    if (recvmessage[0]==34 && recvmessage[1]==43){
     	for (int i=3;i<10;i++){
     	CK_A+=recvmessage[i];
     	CK_B+=CK_A;
