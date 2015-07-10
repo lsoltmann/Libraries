@@ -51,6 +51,7 @@ public:
   int ip2;
   int ip3;
   int ip4;
+  int udpport;
 
 private:
  std::ifstream params;
