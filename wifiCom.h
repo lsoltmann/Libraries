@@ -43,6 +43,9 @@ private:
     int recvlen;
     socklen_t clientlen;
     socklen_t serverlen;
+    int tempfd;
+	   struct ifreq ifr;
+	   std::string IPADR;
 };
 
 
