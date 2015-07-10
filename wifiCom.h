@@ -1,10 +1,11 @@
 /*
  wifiCom.cpp
 
- Description: Library for wifi communication with ground station using TCP
+ Description: Library for wifi communication with ground station using UDP
 
  Revision History
- 26 June 2015 - Created and debugged
+ 26 Jun 2015 - Created and debugged
+ 10 Jul 2015 - Updated
 
  Author: Lars Soltmann
  */
@@ -27,31 +28,33 @@
 class COMMS {
 public:
     COMMS();
-    int openConnection(int port);
-    int sendData(int message);
+    int openConnection(int port,int IPaddress[4]);
+    std::string getIP();
+    int sendData(unsigned char data[3])
     unsigned char listenData();
     int port;
-    int message;
-    unsigned char buffer;
+    int IPaddress[4];
+    unsigned char data[3];
+    unsigned char recvmessage[12];
 
 private:
+    unsigned char message[12];
     int status;
     int error_flag;
     int server_socket;
-    struct sockaddr_in server_address;
-    struct sockaddr_in client_address;
+    struct sockaddr_in local_address;
+    struct sockaddr_in nonlocal_address;
     int recvlen;
-    socklen_t clientlen;
-    socklen_t serverlen;
+    socklen_t local_len;
+    socklen_t nonlocal_len;
     int tempfd;
-	   struct ifreq ifr;
-	   std::string IPADR;
+    struct ifreq ifr;
+    std::string IPADR;
+    std::string lIP;
+    std::string nlIP_s;
+    std::stringstream nlIP_ss;
+    uint8_t CK_A;
+    uint8_t CK_B;
 };
-
-
-
-
-
-
 
 #endif
