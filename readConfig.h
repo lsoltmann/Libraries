@@ -4,7 +4,8 @@ readConfig.h
  Description: Header for configuration reader library
 
  Revision History
- Rev A - 19 June 2015 - Created and debugged
+ 19 June 2015 - Created and debugged
+ 10 July 2015 - Added telemetry variables
 
  Author: Lars Soltmann
  */
