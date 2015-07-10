@@ -1,7 +1,7 @@
 /*
 wifiCom.cpp
 
-Description: Library for wifi communication with ground station using TCP
+Description: Library for wifi communication with ground station using UDP
 
 Revision History
 26 Jun 2015 - Created and debugged
@@ -15,7 +15,7 @@ Author: Lars Soltmann
 COMMS::COMMS(){
 }
 
-std::string COMMS:getIP(){
+std::string COMMS::getIP(){
 	 tempfd = socket(AF_INET, SOCK_DGRAM, 0);
 	 ifr.ifr_addr.sa_family = AF_INET;
 	
