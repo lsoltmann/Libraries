@@ -49,7 +49,7 @@ int readConfig::readfile(){
 		std::getline(params,line);
                 std::getline(params,line);
                 std::getline(params,line);
-		sscanf(line.c_str(),"%d.%d.%d.%d",&output[20],&output[21],&output[22],&output[23]);
+		sscanf(line.c_str(),"%d.%d.%d.%d:%d",&output[20],&output[21],&output[22],&output[23],&output[24]);
 
 		dataSampleRate=output[0];
 		sys_orientation=output[1];
@@ -75,6 +75,7 @@ int readConfig::readfile(){
   		ip2=output[21];
   		ip3=output[22];
   		ip4=output[23];
+  		udpport=output[24];
 	}
 	else{
 		open_error++;
