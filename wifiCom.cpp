@@ -21,8 +21,8 @@ std::string COMMS::getIP(){
 	
 	 // Get IP of wlan0
 	 strncpy(ifr.ifr_name, "wlan0", IFNAMSIZ-1);
-	 ioctl(fd, SIOCGIFADDR, &ifr);
-	 close(fd);
+	 ioctl(tempfd, SIOCGIFADDR, &ifr);
+	 close(tempfd);
 	 IPADR=inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr);
 	 return IPADR;
 }
@@ -60,7 +60,7 @@ int COMMS::openConnection(int port,int IPaddress[4]){
     nonlocal_address.sin_port = htons(port);
     nonlocal_len = sizeof(nonlocal_address);
 
-    status = bind(server_socket, (struct sockaddr *) &local_address, sizeof(local_address));
+    status = bind(server_socket, (struct sockaddr *) &local_address, local_len);
     if (status < 0){
 	error_flag++;
         printf("---> Socket bind failure\n");
@@ -83,7 +83,6 @@ int COMMS::sendData(unsigned char data[3]){
     message[9]=data[2] && 0xFF;
     CK_A=0;
     CK_B=0;
-    //uint8_t CK_A=0, CK_B=0;
     for (int i=3;i<10;i++){
     	CK_A+=message[i];
     	CK_B+=CK_A;
@@ -100,7 +99,7 @@ int COMMS::sendData(unsigned char data[3]){
 }
 
 unsigned char COMMS::listenData(){
-    recvlen = recvfrom(server_socket, &buffer, 12, 0, (struct sockaddr *) &nonlocal_address, &nonlocal_len);
+    recvlen = recvfrom(server_socket, &recvmessage, 12, 0, (struct sockaddr *) &nonlocal_address, &nonlocal_len);
 //    recvlen = recvfrom(server_socket, &buffer, 1, 0, (struct sockaddr *)&client_address, &clientlen);
-    return buffer;
+    return recvmessage;
 }
