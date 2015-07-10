@@ -98,8 +98,22 @@ int COMMS::sendData(unsigned char data[3]){
     return status;
 }
 
-unsigned char COMMS::listenData(){
+int COMMS::listenData(){
+    status=0;
     recvlen = recvfrom(server_socket, &recvmessage, 12, 0, (struct sockaddr *) &nonlocal_address, &nonlocal_len);
 //    recvlen = recvfrom(server_socket, &buffer, 1, 0, (struct sockaddr *)&client_address, &clientlen);
-    return recvmessage;
+    if (recvmessage[0]==34 && recvmessage[1]=43){
+    	for (int i=3;i<10;i++){
+    	CK_A+=recvmessage[i];
+    	CK_B+=CK_A;
+    	}
+    	if (CK_A==recvmessage[10] && CK_B==recvmessage[11]){}
+    	else {
+    		status=2;
+    	}
+    }
+    else {
+    	status=1;
+    }
+    return status;
 }
