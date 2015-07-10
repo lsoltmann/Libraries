@@ -56,7 +56,7 @@ public:
 private:
  std::ifstream params;
  std::string file_name;
- int output[23];
+ int output[24];
  std::string line;
 };
 
