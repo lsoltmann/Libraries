@@ -4,7 +4,8 @@ readConfig.cpp
  Description: Rudimentary configuration file reader for NavDAQ
 
  Revision History
- Rev A - 19 June 2015 - Created and debugged
+ 19 June 2015 - Created and debugged
+ 10 July 2015 - Added telemetry variables
 
  Author: Lars Soltmann
  */
@@ -36,11 +37,19 @@ int readConfig::readfile(){
                 std::getline(params,line);
                 std::getline(params,line);
 		std::getline(params,line);
-                sscanf(line.c_str(),"%d %d %d %d %d",&output[12],&output[13],&output[14],&output[15],&output[16]);
+                sscanf(line.c_str(),"%d %d %d %d %d %d",&output[12],&output[13],&output[14],&output[15],&output[16],&output[17]);
 		std::getline(params,line);
                 std::getline(params,line);
                 std::getline(params,line);
-		sscanf(line.c_str(),"%d",&output[17]);
+		sscanf(line.c_str(),"%d",&output[18]);
+		std::getline(params,line);
+                std::getline(params,line);
+                std::getline(params,line);
+		sscanf(line.c_str(),"%d",&output[19]);
+		std::getline(params,line);
+                std::getline(params,line);
+                std::getline(params,line);
+		sscanf(line.c_str(),"%d.%d.%d.%d",&output[20],&output[21],&output[22],&output[23]);
 
 		dataSampleRate=output[0];
 		sys_orientation=output[1];
@@ -59,7 +68,13 @@ int readConfig::readfile(){
   		MS5611_priority=output[14];
   		MS5805_priority=output[15];
   		ahrs_priority=output[16];
-  		OUTPUT_TO_SCREEN=output[17];
+  		telem_priority=output[17];
+  		OUTPUT_TO_SCREEN=output[18];
+  		telem_active=output[19];
+  		ip1=output[20];
+  		ip2=output[21];
+  		ip3=output[22];
+  		ip4=output[23];
 	}
 	else{
 		open_error++;
@@ -84,6 +99,12 @@ int readConfig::readfile(){
      	cout << output[15] << "\n";
      	cout << output[16] << "\n";
      	cout << output[17] << "\n";
+     	cout << output[18] << "\n";
+    	cout << output[19] << "\n";
+    	cout << output[20] << "\n";
+    	cout << output[21] << "\n";
+      	cout << output[22] << "\n";
+      	cout << output[23] << "\n";
 */
 	params.close();
 	return open_error;
