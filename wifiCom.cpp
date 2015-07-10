@@ -14,7 +14,7 @@ Author: Lars Soltmann
 COMMS::COMMS(){
 }
 
-int COMMS::openConnection(int port,int IPaddress[4]){
+int COMMS::openConnection(int port,int IPaddress[4],int gcs_flag){
     error_flag=0;
 
     // TCP Setup
