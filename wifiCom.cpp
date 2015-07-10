@@ -69,8 +69,29 @@ int COMMS::openConnection(int port,int IPaddress[4]){
     return error_flag;
 }
 
-int COMMS::sendData(unsigned char message){ //<---Continue here with message setup, checksum, etc
-    status=sendto(server_socket, &message, message_len, 0, (struct sockaddr *) &nonlocal_address, nonlocal_len);
+int COMMS::sendData(unsigned char data[3]){
+    //Assemble message to be sent
+    message[0]=34; //identifier 1
+    message[1]=43; //identifier 2
+    message[2]=2;  //1=command, 2=telemetry data
+    message[3]=6;  //payload length, bytes
+    message[4]=(data[0] >> 8) && 0xFF; //data, split into two bytes
+    message[5]=data[0] && 0xFF;
+    message[6]=(data[1] >> 8) && 0xFF; 
+    message[7]=data[1] && 0xFF;
+    message[8]=(data[2] >> 8) && 0xFF; 
+    message[9]=data[2] && 0xFF;
+    CK_A=0;
+    CK_B=0;
+    //uint8_t CK_A=0, CK_B=0;
+    for (int i=3;i<10;i++){
+    	CK_A+=message[i];
+    	CK_B+=CK_A;
+    }
+    message[10]=CK_A;
+    message[11]=CK_B;
+    
+    status=sendto(server_socket, &message, 12, 0, (struct sockaddr *) &nonlocal_address, nonlocal_len);
 //    status=sendto(server_socket, &message, 1, 0, (struct sockaddr *) &client_address, sizeof(client_address));
     if (status < 0){
         printf("Send error\n");
@@ -79,7 +100,7 @@ int COMMS::sendData(unsigned char message){ //<---Continue here with message set
 }
 
 unsigned char COMMS::listenData(){
-    recvlen = recvfrom(server_socket, &buffer, 1, 0, (struct sockaddr *)&server_address, &serverlen);
+    recvlen = recvfrom(server_socket, &buffer, 12, 0, (struct sockaddr *) &nonlocal_address, &nonlocal_len);
 //    recvlen = recvfrom(server_socket, &buffer, 1, 0, (struct sockaddr *)&client_address, &clientlen);
     return buffer;
 }
