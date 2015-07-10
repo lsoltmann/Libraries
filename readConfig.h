@@ -44,11 +44,17 @@ public:
   int ahrs_priority;
   int OUTPUT_TO_SCREEN;
   int sys_orientation;
+  int telem_priority;
+  int telem_active;
+  int ip1;
+  int ip2;
+  int ip3;
+  int ip4;
 
 private:
  std::ifstream params;
  std::string file_name;
- int output[18];
+ int output[23];
  std::string line;
 };
 
