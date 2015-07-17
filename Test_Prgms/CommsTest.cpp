@@ -21,7 +21,7 @@ int main(){
     else{
         printf("Port opened\n");
     }
-/*
+
 // Send data
     printf("Sending data ...\n");
     while (true) {
@@ -30,15 +30,16 @@ int main(){
         message++;
         sleep(1);
     }
-*/
 
+
+/*
 // Recieve data
     printf("Waiting for data ...\n");
     while (true) {
         message=link.listenData();
         printf("Data recieved: %d\n",message);
     }
-
+*/
 
 
 

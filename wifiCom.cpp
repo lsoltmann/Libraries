@@ -18,7 +18,7 @@ COMMS::COMMS(){
 std::string COMMS::getIP(){
 	 tempfd = socket(AF_INET, SOCK_DGRAM, 0);
 	 ifr.ifr_addr.sa_family = AF_INET;
-	
+
 	 // Get IP of wlan0
 	 strncpy(ifr.ifr_name, "wlan0", IFNAMSIZ-1);
 	 ioctl(tempfd, SIOCGIFADDR, &ifr);
@@ -36,7 +36,7 @@ int COMMS::openConnection(int port,int IPaddress[4]){
         error_flag++;
 	printf("---> Socket setup failure\n");
     }
-    
+
     // Local Setup
     lIP=getIP();
 //    memset((char *)&local_address, 0, sizeof(local_address));
@@ -44,7 +44,7 @@ int COMMS::openConnection(int port,int IPaddress[4]){
     local_address.sin_addr.s_addr = inet_addr(lIP.c_str());
     local_address.sin_port = htons(port);
     local_len = sizeof(local_address);
-	    
+
     // Other Machine Setup
     nlIP_ss<<IPaddress[0];
     nlIP_ss<<".";
@@ -69,29 +69,40 @@ int COMMS::openConnection(int port,int IPaddress[4]){
     return error_flag;
 }
 
-int COMMS::sendData(unsigned char data[3]){
+void COMMS::packetize(int txdata[],int datasize,int messageType){
     //Assemble message to be sent
-    message[0]=34; //identifier 1
-    message[1]=43; //identifier 2
-    message[2]=2;  //1=command, 2=telemetry data
-    message[3]=6;  //payload length, bytes
-    message[4]=(data[0] >> 8) && 0xFF; //data, split into two bytes
-    message[5]=data[0] && 0xFF;
-    message[6]=(data[1] >> 8) && 0xFF; 
-    message[7]=data[1] && 0xFF;
-    message[8]=(data[2] >> 8) && 0xFF; 
-    message[9]=data[2] && 0xFF;
+    message[0]=messageType; // 1 = command, 2 = telemetry
+    message[1]=datasize*2; // payload length, bytes (2 bytes per piece of data)
+    j=0;
+    for (int i=2;i<2*datasize+1;i=i+2){
+	bytes.value=txdata[j];
+        message[i]=bytes.split[1];
+        message[i+1]=bytes.split[0];
+        j++;
+    }
     CK_A=0;
     CK_B=0;
-    for (int i=3;i<10;i++){
-    	CK_A+=message[i];
-    	CK_B+=CK_A;
+    for (int i=1;i<2*datasize+2;i++){
+        CK_A+=message[i];
+        CK_B+=CK_A;
     }
-    message[10]=CK_A;
-    message[11]=CK_B;
-    
-    status=sendto(server_socket, &message, 12, 0, (struct sockaddr *) &nonlocal_address, nonlocal_len);
-//    status=sendto(server_socket, &message, 1, 0, (struct sockaddr *) &client_address, sizeof(client_address));
+    message[2*datasize+2]=CK_A;
+    message[2*datasize+3]=CK_B;
+}
+
+void COMMS::unpacketize(uint8_t recvmessage[],int recvlen){
+    j=0;
+    for (int i=2;i<recvmessage[1]+1;i=i+2){
+        bytes.split[1]=recvmessage[i];
+	bytes.split[0]=recvmessage[i+1];
+	rxdata[j]=bytes.value;
+        j++;
+    }
+}
+
+int COMMS::sendData(int txdata[],int datasize,int messageType){
+    packetize(txdata,datasize,messageType);
+  status=sendto(server_socket, &message, 2*datasize+4, 0, (struct sockaddr *) &nonlocal_address, nonlocal_len);
     if (status < 0){
         printf("Send error\n");
     }
@@ -100,14 +111,17 @@ int COMMS::sendData(unsigned char data[3]){
 
 int COMMS::listenData(){
     status=0;
-    recvlen = recvfrom(server_socket, &recvmessage, 12, 0, (struct sockaddr *) &nonlocal_address, &nonlocal_len);
-//    recvlen = recvfrom(server_socket, &buffer, 1, 0, (struct sockaddr *)&client_address, &clientlen);
-    if (recvmessage[0]==34 && recvmessage[1]==43){
-    	for (int i=3;i<10;i++){
+    recvlen = recvfrom(server_socket, &recvmessage, sizeof(recvmessage), 0, (struct sockaddr *) &nonlocal_address, &nonlocal_len);
+    if (recvlen>0){
+        CK_A=0;
+        CK_B=0;
+    	for (int i=1;i<recvlen-2;i++){
     	CK_A+=recvmessage[i];
     	CK_B+=CK_A;
     	}
-    	if (CK_A==recvmessage[10] && CK_B==recvmessage[11]){}
+	if (CK_A==recvmessage[recvlen-2] && CK_B==recvmessage[recvlen-1]){
+		unpacketize(recvmessage,recvlen);
+	}
     	else {
     		status=2;
     	}
@@ -115,5 +129,6 @@ int COMMS::listenData(){
     else {
     	status=1;
     }
+
     return status;
 }
